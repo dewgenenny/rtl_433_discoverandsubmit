@@ -5,7 +5,7 @@ from datetime import datetime
 
 import logging
 
-logging.basicConfig(filename='rtl_433_discoverandsubmit.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEBUG)
 
 
 
