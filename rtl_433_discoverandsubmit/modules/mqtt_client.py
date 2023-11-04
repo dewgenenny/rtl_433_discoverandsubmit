@@ -1,7 +1,8 @@
 import paho.mqtt.client as mqtt
 import json
-from config_loader import get_mqtt_config
+from rtl_433_discoverandsubmit.modules.config_loader import get_mqtt_config
 from datetime import datetime
+from rtl_433_discoverandsubmit import config
 
 import logging
 
@@ -57,9 +58,10 @@ def on_message(client, userdata, msg):
 
 def connect_mqtt():
     """Connect to MQTT broker and return the client."""
+    logging.debug("mqtt server = " + config.configuration['mqtt_server'])
     client = mqtt.Client()
-    client.username_pw_set(mqtt_config.get("username"), mqtt_config.get("password"))
-    client.connect(mqtt_config.get("server"), mqtt_config.get("port", 1883), 60)
+    client.username_pw_set(config.configuration['mqtt_username'], config.configuration['mqtt_password'])
+    client.connect(config.configuration['mqtt_server'], config.configuration['mqtt_port'], 60)
     client.on_connect = on_connect
     client.on_message = on_message
     client.loop_start()

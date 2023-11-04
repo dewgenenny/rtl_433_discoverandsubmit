@@ -1,12 +1,12 @@
 import logging
 import json
-from mqtt_client import publish_to_topic
-from config_loader import load_device_mappings
-logging.basicConfig(filename='rtl_433_discoverandsubmit.log', level=logging.INFO)
+from rtl_433_discoverandsubmit.modules.mqtt_client import publish_to_topic
+from rtl_433_discoverandsubmit.modules.config_loader import load_device_mappings
+logging.basicConfig(filename='rtl_433_discoverandsubmit.log', level=logging.DEBUG)
 
 NAMING_KEYS = ["brand", "model", "subtype", "channel", "id"]
 DEVICE_MAPPINGS = load_device_mappings()
-
+logging.info(DEVICE_MAPPINGS)
 
 def sanitize(string):
     """Sanitize a string to be used as a topic component."""

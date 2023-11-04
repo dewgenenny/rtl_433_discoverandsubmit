@@ -1,3 +1,3 @@
-# main.py
+# __init__.py
 
 # Placeholder content

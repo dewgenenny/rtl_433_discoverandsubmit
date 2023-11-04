@@ -1,9 +1,0 @@
-{
-    "mqtt": {
-        "server": "yourmqttserver",
-        "port": 1883,
-        "username": "username",
-        "password": "pass",
-        "topic": "rtl_433/+/events"
-    }
-}

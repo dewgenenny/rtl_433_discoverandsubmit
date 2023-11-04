@@ -1,7 +1,11 @@
 from unicurses import *
-from mqtt_client import connect_mqtt, detected_devices
-from ha_integration import publish_ha_config
+from rtl_433_discoverandsubmit.modules.mqtt_client import connect_mqtt, detected_devices
+from rtl_433_discoverandsubmit.modules.ha_integration import publish_ha_config
 from pprint import pprint
+import argparse
+from rtl_433_discoverandsubmit import config
+import logging
+
 
 def init_ui():
     """Initialize the Unicurses UI."""
@@ -103,10 +107,36 @@ def main_loop(stdscr):
 
         #mqtt_client.loop(timeout=0.1)
 
-if __name__ == "__main__":
+def main():
+    parser = argparse.ArgumentParser(description='rtl_433 to Home Assistant bridge.')
+
+    parser.add_argument('--mqtt_server', required=True, help='MQTT server address (e.g., "192.168.1.10").')
+    parser.add_argument('--mqtt_port', type=int, default=1883, help='MQTT server port (default: 1883).')
+    parser.add_argument('--mqtt_username', default=None, help='MQTT username (if authentication is required).')
+    parser.add_argument('--mqtt_password', default=None, help='MQTT password (if authentication is required).')
+    parser.add_argument('--topic', default="rtl_433/+/events", help='Topic to listen to (e.g., "rtl_433/+/events").')
+
+    args = parser.parse_args()
+
+    config.configuration['mqtt_server'] = args.mqtt_server
+    config.configuration['mqtt_port'] = args.mqtt_port
+    config.configuration['mqtt_username'] = args.mqtt_username
+    config.configuration['mqtt_password'] = args.mqtt_password
+    config.configuration['topic'] = args.topic
+
+
     stdscr = init_ui()
     try:
         main_loop(stdscr)
     finally:
         end_ui()
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    main()
 
