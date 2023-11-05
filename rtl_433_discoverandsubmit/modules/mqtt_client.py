@@ -1,6 +1,5 @@
 import paho.mqtt.client as mqtt
 import json
-from rtl_433_discoverandsubmit.modules.config_loader import get_mqtt_config
 from datetime import datetime
 from rtl_433_discoverandsubmit import config
 
@@ -9,9 +8,6 @@ import logging
 logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEBUG)
 
 
-
-# MQTT Configuration
-mqtt_config = get_mqtt_config()
 
 # List to store detected devices
 detected_devices = []
