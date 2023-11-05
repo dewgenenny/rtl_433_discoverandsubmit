@@ -3,12 +3,9 @@ import json
 from datetime import datetime
 from rtl_433_discoverandsubmit import config
 from rtl_433_discoverandsubmit.modules.device_manager import save_devices_to_file
-
 import logging
-
-logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEBUG)
-
-
+log_level = getattr(logging, config.configuration['log_level'])
+logging.basicConfig(filename=config.configuration['log_filename'], level=log_level)
 
 # List to store detected devices
 detected_devices = []

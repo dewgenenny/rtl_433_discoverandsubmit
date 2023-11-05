@@ -1,10 +1,10 @@
 from pathlib import Path
 import json
+from rtl_433_discoverandsubmit import config
 import logging
+log_level = getattr(logging, config.configuration['log_level'])
+logging.basicConfig(filename=config.configuration['log_filename'], level=log_level)
 
-
-
-logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEBUG)
 logging.info("Right at start of device manager")
 
 

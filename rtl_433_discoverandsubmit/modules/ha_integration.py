@@ -1,8 +1,11 @@
-import logging
 import json
 from rtl_433_discoverandsubmit.modules.mqtt_client import publish_to_topic
 from rtl_433_discoverandsubmit.modules.config_loader import load_device_mappings
-logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.ERROR)
+from rtl_433_discoverandsubmit import config
+import logging
+log_level = getattr(logging, config.configuration['log_level'])
+logging.basicConfig(filename=config.configuration['log_filename'], level=log_level)
+
 
 NAMING_KEYS = ["brand", "model", "subtype", "channel", "id"]
 DEVICE_MAPPINGS = load_device_mappings()
