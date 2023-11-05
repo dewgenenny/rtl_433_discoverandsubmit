@@ -1,11 +1,15 @@
 from unicurses import *
 from rtl_433_discoverandsubmit.modules.mqtt_client import connect_mqtt, detected_devices
+global detected_devices
 from rtl_433_discoverandsubmit.modules.ha_integration import publish_ha_config
+from  rtl_433_discoverandsubmit.modules.device_manager import load_devices_from_file
+
 from pprint import pprint
 import argparse
 from rtl_433_discoverandsubmit import config
 import logging
 
+logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEBUG)
 
 def init_ui():
     """Initialize the Unicurses UI."""
@@ -21,8 +25,9 @@ def end_ui():
     """End the Unicurses UI session."""
     endwin()
 
-def display_device_list(stdscr, devices, selected_index):
+def display_device_list(stdscr, devices, selected_index, scroll_offset):
     """Display the list of detected devices in a table format."""
+    height, width = getmaxyx(stdscr)
     y, x = 0, 0
     move(y, x)
     addstr("Device ID".ljust(20) + " | " + "First Detected".ljust(19) + " | " + "Last Detected".ljust(19))
@@ -30,9 +35,9 @@ def display_device_list(stdscr, devices, selected_index):
     addstr("-" * 20 + "+" + "-" * 21 + "+" + "-" * 21)
 
     # Display each device entry in the list
-    for idx, device in enumerate(devices):
+    for idx, device in enumerate(devices[scroll_offset:]):  # Start from the scroll offset
         move(y + idx + 2, x)
-        if idx == selected_index:
+        if idx == selected_index - scroll_offset:  # Adjusted for scroll_offset
             attron(A_REVERSE)
 
         device_str = str(device['id']).ljust(20) + " | " + \
@@ -40,12 +45,16 @@ def display_device_list(stdscr, devices, selected_index):
                      str(device['last_detected_time']).ljust(19)
         addstr(device_str)
 
-        if idx == selected_index:
+        if idx == selected_index - scroll_offset:  # Adjusted for scroll_offset
             attroff(A_REVERSE)
 
-        height, width = getmaxyx(stdscr)
-        move(height - 2, 0)  # Move to second last line of the screen
-        addstr("Choose an entry and hit enter for more details or press q to quit.")
+
+        if y + idx + 2 >= height - 2:  # Check if we've reached the bottom of the screen
+            break
+
+    move(height - 2, 0)  # Move to second last line of the screen
+    addstr("Choose an entry and hit enter for more details or press q to quit.")
+
 
 
 def display_device_details(stdscr, device):
@@ -64,6 +73,7 @@ def display_device_details(stdscr, device):
 
 def main_loop(stdscr):
     """Main UI loop."""
+    scroll_offset = 0
     selected_index = 0
     in_detailed_view = False
     mqtt_client = connect_mqtt()
@@ -73,15 +83,27 @@ def main_loop(stdscr):
         height, width = getmaxyx(stdscr)
 
         if not in_detailed_view:
-            display_device_list(stdscr, detected_devices, selected_index)
+            display_device_list(stdscr, detected_devices, selected_index, scroll_offset)
         else:
             display_device_details(stdscr, detected_devices[selected_index])
 
         key = getch()
-        if key == KEY_DOWN and not in_detailed_view and selected_index < len(detected_devices) - 1:
-            selected_index += 1
-        elif key == KEY_UP and not in_detailed_view and selected_index > 0:
-            selected_index -= 1
+        if key == KEY_RESIZE:
+            # Handle the resizing of the console
+            clear()  # Clear the screen
+            refresh()  # Refresh the entire screen
+
+            continue  # Skip the rest of the loop and redraw on the next iteration
+        if key == KEY_DOWN and not in_detailed_view:
+            if selected_index < len(detected_devices) - 1:
+                selected_index += 1
+            if selected_index - scroll_offset > height - 4:  # -4 accounts for header and footer lines
+                scroll_offset += 1
+        elif key == KEY_UP and not in_detailed_view:
+            if selected_index > 0:
+                selected_index -= 1
+            if selected_index < scroll_offset:
+                scroll_offset -= 1
         elif key == ord('q'):
             mqtt_client.disconnect()
             break
@@ -97,6 +119,7 @@ def main_loop(stdscr):
             move(5, 0)
             addstr("Device added to Home Assistant!")  # Feedback to use)
         elif key == ord('q'):
+            save_devices_to_file(detected_devices)
             mqtt_client.disconnect()
             break
         else:
@@ -123,6 +146,16 @@ def main():
     config.configuration['mqtt_username'] = args.mqtt_username
     config.configuration['mqtt_password'] = args.mqtt_password
     config.configuration['topic'] = args.topic
+
+
+    try:
+        loaded_devices = load_devices_from_file()
+        detected_devices.clear()  # Clear the contents of the list
+        detected_devices.extend(loaded_devices)  # Extend it with the loaded devices
+        logging.debug(f"Loaded devices: {loaded_devices}")
+
+    except Exception as e:
+        logging.error(f"Error during device loading: {str(e)}")
 
 
     stdscr = init_ui()

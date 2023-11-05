@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 from datetime import datetime
 from rtl_433_discoverandsubmit import config
+from rtl_433_discoverandsubmit.modules.device_manager import save_devices_to_file
 
 import logging
 
@@ -22,7 +23,7 @@ def on_message(client, userdata, msg):
     payload = json.loads(msg.payload.decode())
 
     topicprefix = "/".join(msg.topic.split("/", 2)[:2])
-    logging.debug("Topic Prefix = : " + topicprefix)
+
     # Construct a unique device identifier from model and id
     device_id = f"{payload['model']}_{payload['id']}"
 
@@ -42,6 +43,9 @@ def on_message(client, userdata, msg):
         device_data['original_id'] = old_id
         device_data['id'] = device_id  # Set the id field after updating from payload
         detected_devices.append(device_data)
+
+        #save new device to file, so that it is remembered on startup
+        save_devices_to_file(detected_devices)
 
     else:
         # Update the last detected time and other attributes for the existing device

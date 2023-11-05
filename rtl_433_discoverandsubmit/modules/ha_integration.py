@@ -2,11 +2,11 @@ import logging
 import json
 from rtl_433_discoverandsubmit.modules.mqtt_client import publish_to_topic
 from rtl_433_discoverandsubmit.modules.config_loader import load_device_mappings
-logging.basicConfig(filename='rtl_433_discoverandsubmit.log', level=logging.DEBUG)
+logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.ERROR)
 
 NAMING_KEYS = ["brand", "model", "subtype", "channel", "id"]
 DEVICE_MAPPINGS = load_device_mappings()
-logging.info(DEVICE_MAPPINGS)
+
 
 def sanitize(string):
     """Sanitize a string to be used as a topic component."""
@@ -39,8 +39,6 @@ def publish_ha_config(client, data, retain=False):
     model = data.get("model")
     id= data.get("original_id")
     uid = data.get("id")
-
-
 
     logging.info(f"Model: {model}")
     instance = rtl_433_device_topic(data)
