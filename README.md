@@ -8,6 +8,8 @@ A command-line utility to connect to an MQTT server, listen to `rtl_433` events,
 - Provides an interactive CLI to let users choose devices.
 - Generates Home Assistant auto-discovery configurations for chosen devices.
 
+[![Upload Python Package](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml/badge.svg)](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml)
+
 Screenshot of devices listed
 ![img.png](Screenshots/img.png)
 
