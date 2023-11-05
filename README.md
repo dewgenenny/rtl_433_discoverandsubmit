@@ -13,8 +13,7 @@ A command-line utility to connect to an MQTT server, listen to `rtl_433` events,
 [![Upload Python Package](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml/badge.svg)](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml)
 
 Screenshot of devices listed
-![img.png](https://github.com/dewgenenny/rtl_433_discoverandsubmit/blob/0.1.3/Screenshots/img.png)
-
+![img_1.png](Screenshots/img_5.png)
 Detailed device view and opportunity to add to Home Assistant
 ![img.png](Screenshots/img1.png)
 
