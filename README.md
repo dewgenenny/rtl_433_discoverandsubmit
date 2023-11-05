@@ -24,18 +24,22 @@ You can install `rtl_433_discoverandsubmit` directly from PyPI:
 pip install rtl_433_discoverandsubmit
 ```
 ##Usage
+
 After installation, you can run the tool using:
 
 ```rtl_433_discoverandsubmit```
 
 ##Command Line Arguments
+
 You can specify the MQTT server, username, and password (if applicable) as well as the topic via command-line arguments. More details can be found in the help documentation:
 
 ```rtl_433_discoverandsubmit --help```
 
 ##Contributing
+
 Feedback, bug reports, and pull requests are super welcome on this project. If you face any issues, please raise them in the issue tracker.
 
 ##License
+
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
