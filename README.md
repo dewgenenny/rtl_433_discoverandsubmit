@@ -2,6 +2,8 @@
 
 A command-line utility to connect to an MQTT server, listen to `rtl_433` events, and allow users to generate auto-discovery configurations for Home Assistant for the devices they choose.
 
+[Link to GitHub project](https://github.com/dewgenenny/rtl_433_discoverandsubmit)
+
 ## Features
 - Connects to an MQTT server.
 - Listens to `rtl_433` events in real-time.
@@ -11,7 +13,7 @@ A command-line utility to connect to an MQTT server, listen to `rtl_433` events,
 [![Upload Python Package](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml/badge.svg)](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml)
 
 Screenshot of devices listed
-![img.png](Screenshots/img.png)
+![img.png](https://github.com/dewgenenny/rtl_433_discoverandsubmit/blob/0.1.3/Screenshots/img.png)
 
 Detailed device view and opportunity to add to Home Assistant
 ![img.png](Screenshots/img1.png)
@@ -25,6 +27,8 @@ You can install `rtl_433_discoverandsubmit` directly from PyPI:
 ```bash
 pip install rtl_433_discoverandsubmit
 ```
+
+
 ##Usage
 
 After installation, you can run the tool using:
