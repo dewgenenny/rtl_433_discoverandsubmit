@@ -15,7 +15,7 @@ detected_devices = []
 
 def on_connect(client, userdata, flags, rc):
     """Callback for when the client receives a CONNACK response from the server."""
-    client.subscribe(mqtt_config.get("topic", "rtl_433/+/events"))
+    client.subscribe(config.configuration['topic'])
 
 def on_message(client, userdata, msg):
     global detected_devices
