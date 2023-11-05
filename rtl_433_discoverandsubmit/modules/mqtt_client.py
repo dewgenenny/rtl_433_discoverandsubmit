@@ -13,6 +13,13 @@ logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEB
 # List to store detected devices
 detected_devices = []
 
+def sort_detected_devices():
+    global detected_devices
+    if config.configuration['current_sort_criteria'] == "last_detected_time":
+        detected_devices.sort(key=lambda x: x['last_detected_time'], reverse=True)
+    else:
+        detected_devices.sort(key=lambda x: x.get('model', '').lower())
+
 
 def on_connect(client, userdata, flags, rc):
     """Callback for when the client receives a CONNACK response from the server."""
@@ -53,7 +60,7 @@ def on_message(client, userdata, msg):
         for key, value in payload.items():
             existing_device[key] = value
         existing_device['id'] = device_id  # Set the id field after updating from payload
-
+    sort_detected_devices()
 
 
 def connect_mqtt():

@@ -4,5 +4,6 @@ configuration = {
     'mqtt_port': None,
     'mqtt_username': None,
     'mqtt_password': None,
-    'topic': None
+    'topic': None,
+    'current_sort_criteria' : "last_detected_time"
 }

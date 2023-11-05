@@ -1,15 +1,17 @@
 from unicurses import *
-from rtl_433_discoverandsubmit.modules.mqtt_client import connect_mqtt, detected_devices
+from rtl_433_discoverandsubmit.modules.mqtt_client import connect_mqtt, detected_devices, sort_detected_devices
 global detected_devices
 from rtl_433_discoverandsubmit.modules.ha_integration import publish_ha_config
 from  rtl_433_discoverandsubmit.modules.device_manager import load_devices_from_file
-
+from rtl_433_discoverandsubmit import config
 from pprint import pprint
 import argparse
-from rtl_433_discoverandsubmit import config
 import logging
 
 logging.basicConfig(filename='rtl_433_discoverandsubmit.log',  level=logging.DEBUG)
+
+
+
 
 def init_ui():
     """Initialize the Unicurses UI."""
@@ -21,9 +23,13 @@ def init_ui():
     return stdscr
 
 
+
+
 def end_ui():
     """End the Unicurses UI session."""
     endwin()
+
+
 
 def display_device_list(stdscr, devices, selected_index, scroll_offset):
     """Display the list of detected devices in a table format."""
@@ -33,6 +39,12 @@ def display_device_list(stdscr, devices, selected_index, scroll_offset):
     addstr("Device ID".ljust(20) + " | " + "First Detected".ljust(19) + " | " + "Last Detected".ljust(19))
     move(y + 1, x)
     addstr("-" * 20 + "+" + "-" * 21 + "+" + "-" * 21)
+
+    move(height - 3, 0)  # Move to the third last line of the screen
+    if config.configuration['current_sort_criteria'] == "last_detected_time":
+        addstr("Sorted by: Last Detected Time. Press 's' to change.")
+    else:
+        addstr("Sorted by: Device Name. Press 's' to change.")
 
     # Display each device entry in the list
     for idx, device in enumerate(devices[scroll_offset:]):  # Start from the scroll offset
@@ -73,6 +85,8 @@ def display_device_details(stdscr, device):
 
 def main_loop(stdscr):
     """Main UI loop."""
+    global current_sort_criteria
+    global detected_devices
     scroll_offset = 0
     selected_index = 0
     in_detailed_view = False
@@ -88,6 +102,14 @@ def main_loop(stdscr):
             display_device_details(stdscr, detected_devices[selected_index])
 
         key = getch()
+        if key == ord('s'):
+            # Toggle sort criteria
+            if config.configuration['current_sort_criteria'] == "last_detected_time":
+                config.configuration['current_sort_criteria'] = "model"
+            else:
+                config.configuration['current_sort_criteria'] = "last_detected_time"
+            sort_detected_devices()
+            refresh()
         if key == KEY_RESIZE:
             # Handle the resizing of the console
             clear()  # Clear the screen
@@ -113,7 +135,7 @@ def main_loop(stdscr):
             in_detailed_view = False
         elif key == ord('a') and in_detailed_view:
             #add_device_to_ha(detected_devices[selected_index])
-            pprint(detected_devices[selected_index])
+
             publish_ha_config(mqtt_client,detected_devices[selected_index])
 
             move(5, 0)
