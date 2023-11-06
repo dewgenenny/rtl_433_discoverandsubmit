@@ -295,6 +295,18 @@
         }
     },
 
+    "leaknow": {
+        "device_type": "binary_sensor",
+        "object_suffix": "leaknow",
+        "config": {
+            "name": "Leak Sensor",
+            "payload_on": "1",
+            "payload_off": "0",
+            "device_class": "problem",
+            "force_update": true
+        }
+    },
+
     "rssi": {
         "device_type": "sensor",
         "object_suffix": "rssi",
@@ -435,6 +447,16 @@
             "name": "SCM Consumption Value",
             "value_template": "{{ value|int }}",
             "state_class": "total_increasing"
+        }
+    },
+    "consumption": {
+        "device_type": "sensor",
+        "object_suffix": "consumption",
+        "config": {
+            "name": "Water Consumption",
+            "value_template": "{{ value | float / 10 }}",
+            "state_class": "total_increasing",
+            "unit_of_measurement": "gal"
         }
     },
     "power0_W": {
