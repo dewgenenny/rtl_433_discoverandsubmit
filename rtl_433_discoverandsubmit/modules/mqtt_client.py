@@ -31,10 +31,13 @@ def on_message(client, userdata, msg):
     global detected_devices
     payload = json.loads(msg.payload.decode())
 
+    # Safely get 'id' from payload or default to 'unknown' (fixes https://github.com/dewgenenny/rtl_433_discoverandsubmit/issues/1)
+    device_id_value = payload.get('id', 'unknown')
+
     topicprefix = "/".join(msg.topic.split("/", 2)[:2])
 
     # Construct a unique device identifier from model and id
-    device_id = f"{payload['model']}_{payload['id']}"
+    device_id = f"{payload['model']}_{device_id_value}"
 
     # Check if the device is already in the detected devices list
     existing_device = next((device for device in detected_devices if device['id'] == device_id), None)
