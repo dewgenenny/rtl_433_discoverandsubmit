@@ -12,10 +12,15 @@ detected_devices = []
 
 def sort_detected_devices():
     global detected_devices
-    if config.configuration['current_sort_criteria'] == "last_detected_time":
-        detected_devices.sort(key=lambda x: x['last_detected_time'], reverse=True)
+    criteria = config.configuration['current_sort_criteria']
+    reverse = True if criteria in ["last_detected_time", "message_count"] else False
+
+    if criteria in ["last_detected_time", "message_count"]:
+        detected_devices.sort(key=lambda x: x[criteria], reverse=reverse)
     else:
         detected_devices.sort(key=lambda x: x.get('model', '').lower())
+
+    return detected_devices
 
 
 def on_connect(client, userdata, flags, rc):
@@ -38,7 +43,8 @@ def on_message(client, userdata, msg):
     if not existing_device:
         device_data = {
             'first_detected_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'last_detected_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'last_detected_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'message_count': 1  # Initialize message count
         }
         device_data.update(payload)  # Add all the payload attributes to the dictionary
         device_data['topicprefix']= topicprefix
@@ -54,6 +60,8 @@ def on_message(client, userdata, msg):
     else:
         # Update the last detected time and other attributes for the existing device
         existing_device['last_detected_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        existing_device['message_count'] += 1  # Increment message count
+
         for key, value in payload.items():
             existing_device[key] = value
         existing_device['id'] = device_id  # Set the id field after updating from payload

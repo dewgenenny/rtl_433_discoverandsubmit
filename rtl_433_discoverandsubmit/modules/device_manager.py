@@ -37,6 +37,12 @@ def load_devices_from_file():
             devices = json.load(file)
             print("inside load file, after load")
             logging.debug(f"Loaded {len(devices)} devices from the file.")
+
+            # 0.1.7 adds message count, we need to deal with people that have saved devices from previous versions
+            for device in devices:
+                if 'message_count' not in device:
+                    device['message_count'] = 1  # Default value for existing devices
+
             return devices
     except FileNotFoundError:
         logging.info("File not found error")

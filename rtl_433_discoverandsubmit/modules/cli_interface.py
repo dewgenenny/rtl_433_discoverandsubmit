@@ -31,22 +31,32 @@ def end_ui():
     """End the Unicurses UI session."""
     endwin()
 
+def truncate_string(string, max_length):
+    """Truncate a string to a maximum length, adding an ellipsis if truncated."""
+    return (string[:max_length-3] + '...') if len(string) > max_length else string
 
 
 def display_device_list(stdscr, devices, selected_index, scroll_offset):
     """Display the list of detected devices in a table format."""
+    # Define column widths
+    id_width = 25
+    message_count_width = 10
+    first_detected_width = 19
+    last_detected_width = 19
+
+
     height, width = getmaxyx(stdscr)
     y, x = 0, 0
+
     move(y, x)
-    addstr("Device ID".ljust(20) + " | " + "First Detected".ljust(19) + " | " + "Last Detected".ljust(19))
+    addstr("Device ID".ljust(id_width) + " | " + "Msg Count".ljust(message_count_width) + " | " + "First Detected".ljust(first_detected_width) + " | " + "Last Detected".ljust(last_detected_width))
+
     move(y + 1, x)
-    addstr("-" * 20 + "+" + "-" * 21 + "+" + "-" * 21)
+    addstr("-" * 20 + "+" + "-" * 11 + "+" + "-" * 21 + "+" + "-" * 21)
 
     move(height - 3, 0)  # Move to the third last line of the screen
-    if config.configuration['current_sort_criteria'] == "last_detected_time":
-        addstr("Sorted by: Last Detected Time. Press 's' to change.")
-    else:
-        addstr("Sorted by: Device Name. Press 's' to change.")
+    addstr("Press 's' to sort by last detected time, model, or message count.")
+
 
     # Display each device entry in the list
     for idx, device in enumerate(devices[scroll_offset:]):  # Start from the scroll offset
@@ -54,9 +64,10 @@ def display_device_list(stdscr, devices, selected_index, scroll_offset):
         if idx == selected_index - scroll_offset:  # Adjusted for scroll_offset
             attron(A_REVERSE)
 
-        device_str = str(device['id']).ljust(20) + " | " + \
-                     str(device['first_detected_time']).ljust(19) + " | " + \
-                     str(device['last_detected_time']).ljust(19)
+
+        device_str = f"{truncate_string(device['id'], id_width).ljust(id_width)} | {str(device['message_count']).ljust(message_count_width)} | " + \
+                     f"{device['first_detected_time'].ljust(first_detected_width)} | " + \
+                     f"{device['last_detected_time'].ljust(last_detected_width)}"
         addstr(device_str)
 
         if idx == selected_index - scroll_offset:  # Adjusted for scroll_offset
@@ -105,9 +116,12 @@ def main_loop(stdscr):
 
         key = getch()
         if key == ord('s'):
-            # Toggle sort criteria
-            if config.configuration['current_sort_criteria'] == "last_detected_time":
+    # Cycle through sorting criteria
+            current_criteria = config.configuration['current_sort_criteria']
+            if current_criteria == "last_detected_time":
                 config.configuration['current_sort_criteria'] = "model"
+            elif current_criteria == "model":
+                config.configuration['current_sort_criteria'] = "message_count"
             else:
                 config.configuration['current_sort_criteria'] = "last_detected_time"
             sort_detected_devices()
