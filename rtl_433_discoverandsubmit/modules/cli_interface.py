@@ -2,7 +2,9 @@ from unicurses import *
 from rtl_433_discoverandsubmit.modules.mqtt_client import connect_mqtt, detected_devices, sort_detected_devices
 global detected_devices
 from rtl_433_discoverandsubmit.modules.ha_integration import publish_ha_config
-from  rtl_433_discoverandsubmit.modules.device_manager import load_devices_from_file
+from  rtl_433_discoverandsubmit.modules.device_manager import load_devices_from_file, save_devices_to_file
+from rtl_433_discoverandsubmit.modules.mqtt_client import reset_message_counters
+
 from rtl_433_discoverandsubmit import config
 from pprint import pprint
 import argparse
@@ -55,7 +57,7 @@ def display_device_list(stdscr, devices, selected_index, scroll_offset):
     addstr("-" * 20 + "+" + "-" * 11 + "+" + "-" * 21 + "+" + "-" * 21)
 
     move(height - 3, 0)  # Move to the third last line of the screen
-    addstr("Press 's' to sort by last detected time, model, or message count.")
+    addstr("Press 's' to sort by last detected time, model, or message count. Press 'k' to reset counters")
 
 
     # Display each device entry in the list
@@ -115,6 +117,9 @@ def main_loop(stdscr):
             display_device_details(stdscr, detected_devices[selected_index])
 
         key = getch()
+        # Check if 'k' is pressed
+        if key == ord('k'):
+            reset_message_counters()
         if key == ord('s'):
     # Cycle through sorting criteria
             current_criteria = config.configuration['current_sort_criteria']
@@ -144,6 +149,7 @@ def main_loop(stdscr):
                 scroll_offset -= 1
         elif key == ord('q'):
             mqtt_client.disconnect()
+            save_devices_to_file(detected_devices)
             break
         elif key == ord('\n') and not in_detailed_view:
             in_detailed_view = True

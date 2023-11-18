@@ -10,6 +10,13 @@ logging.basicConfig(filename=config.configuration['log_filename'], level=log_lev
 # List to store detected devices
 detected_devices = []
 
+
+def reset_message_counters():
+    global detected_devices
+    for device in detected_devices:
+        if 'message_count' in device:
+            device['message_count'] = 0
+
 def sort_detected_devices():
     global detected_devices
     criteria = config.configuration['current_sort_criteria']
