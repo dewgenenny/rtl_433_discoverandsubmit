@@ -30,7 +30,7 @@ def rtl_433_device_topic(data):
     return '/'.join(path_elements)
 
 
-def publish_ha_config(client, data, retain=False):
+def publish_ha_config(client, data, retain=True):
     """
     Publish Home Assistant configuration for a device.
 
