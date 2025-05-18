@@ -1,1 +1,2 @@
 include rtl_433_discoverandsubmit/config.py
+include custom_components/rtl_433_discoverandsubmit/device_mappings.json

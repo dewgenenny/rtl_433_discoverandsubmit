@@ -24,7 +24,8 @@ setup(
     license="MIT",  # Assuming you want to use the MIT License
     keywords="rtl_433 mqtt homeassistant",
     package_data={
-        'rtl_433_discoverandsubmit': ['config/*.json'],
+        'rtl_433_discoverandsubmit': [],
+        'custom_components.rtl_433_discoverandsubmit': ['device_mappings.json'],
     },
     # Entry points
     entry_points={
