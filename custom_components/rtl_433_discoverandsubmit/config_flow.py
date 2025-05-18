@@ -45,19 +45,34 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._device_data = discovery_info
         return await self.async_step_confirm()
 
+    def _device_title(self) -> str:
+        device = self._device_data["device"]
+        model = device.get("model", "rtl_433")
+        devid = device.get("id")
+        return f"{model} {devid}" if devid is not None else model
+
     async def async_step_confirm(self, user_input=None):
         if user_input is not None:
             if user_input.get("use_device"):
                 _LOGGER.debug("User accepted device %s", self._device_data)
                 return self.async_create_entry(
-                    title=self._device_data["device"].get("model", "rtl_433"),
+                    title=self._device_title(),
                     data=self._device_data,
                 )
             _LOGGER.debug("User declined device %s", self._device_data)
             return self.async_abort(reason="user_declined")
+
+        device = self._device_data["device"]
         _LOGGER.debug("Asking user to confirm device %s", self._device_data)
+        placeholders = {
+            "model": device.get("model", "unknown"),
+            "id": device.get("id", "unknown"),
+            "sensors": ", ".join(device.get("sensors", {}).keys()) or "none",
+        }
+
         return self.async_show_form(
             step_id="confirm",
+            description_placeholders=placeholders,
             data_schema=vol.Schema({vol.Required("use_device", default=True): bool}),
         )
 
