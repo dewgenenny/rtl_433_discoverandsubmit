@@ -1,0 +1,10 @@
+{
+    "config": {
+        "step": {
+            "confirm": {
+                "title": "Add {model} {id}",
+                "description": "Discovered device \"{model}\" with id {id}. Sensors: {sensors}. Add to Home Assistant?"
+            }
+        }
+    }
+}
