@@ -24,11 +24,18 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @property
     def flow_title(self) -> str:  # pragma: no cover - simple property
         """Return the title of the current flow."""
+        placeholders = self.context.get("title_placeholders")
+        if placeholders:
+            model = placeholders.get("model", "rtl_433")
+            devid = placeholders.get("id")
+            return f"{model} {devid}" if devid is not None else model
+
         if self._device_data:
             device = self._device_data["device"]
             model = device.get("model", "rtl_433")
             devid = device.get("id")
             return f"{model} {devid}" if devid is not None else model
+
         return "RTL_433 Discover and Submit"
 
     async def async_step_user(self, user_input=None):
