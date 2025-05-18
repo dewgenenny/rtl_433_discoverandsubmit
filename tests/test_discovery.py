@@ -39,5 +39,17 @@ class DiscoveryManagerTest(unittest.TestCase):
         asyncio.run(manager.handle_message(payload))
         self.assertEqual(len(hass.config_entries.flow.inits), 1)
 
+    def test_device_not_rediscovered_after_add(self):
+        hass = FakeHass()
+        manager = DiscoveryManager(hass, "entry")
+        payload = {"model": "test", "id": 2}
+        asyncio.run(manager.handle_message(payload))
+        device_id = "test_2"
+        # Simulate user accepting the device
+        hass.data[DOMAIN]["entry"][DATA_DEVICES][device_id] = payload
+        hass.data[DOMAIN]["entry"][DATA_PENDING].pop(device_id, None)
+        asyncio.run(manager.handle_message(payload))
+        self.assertEqual(len(hass.config_entries.flow.inits), 1)
+
 if __name__ == '__main__':
     unittest.main()

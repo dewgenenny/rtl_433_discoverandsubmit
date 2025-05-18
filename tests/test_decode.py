@@ -12,5 +12,13 @@ class DecodeMessageTest(unittest.TestCase):
         self.assertIn('temperature_C', result['sensors'])
         self.assertEqual(result['sensors']['temperature_C'], 23)
 
+    def test_parse_message_ignores_events_suffix(self):
+        topic = "rtl_433/some_model/events"
+        payload = '{"id": 99, "temperature_C": 20}'
+        result = parse_mqtt_message(topic, payload)
+        self.assertEqual(result['model'], 'some_model')
+        # id should come from payload, not the literal word 'events'
+        self.assertEqual(result['id'], 99)
+
 if __name__ == '__main__':
     unittest.main()
