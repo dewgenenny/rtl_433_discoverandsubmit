@@ -5,5 +5,6 @@
     "documentation": "https://example.com",
     "dependencies": [],
     "codeowners": [],
-    "requirements": []
+    "requirements": [],
+    "config_flow": true
 }
