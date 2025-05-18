@@ -8,6 +8,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 
 from . import DOMAIN
+from .const import DATA_DEVICES, DATA_PENDING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,6 +20,16 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self):
         self._device_data = None
+
+    @property
+    def flow_title(self) -> str:  # pragma: no cover - simple property
+        """Return the title of the current flow."""
+        if self._device_data:
+            device = self._device_data["device"]
+            model = device.get("model", "rtl_433")
+            devid = device.get("id")
+            return f"{model} {devid}" if devid is not None else model
+        return "RTL_433 Discover and Submit"
 
     async def async_step_user(self, user_input=None):
         if user_input is not None:
@@ -53,13 +64,20 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_confirm(self, user_input=None):
         if user_input is not None:
+            device = self._device_data["device"]
+            entry_id = self._device_data["entry_id"]
+            device_id = f"{device.get('model')}_{device.get('id', 'unknown')}"
+            pending = self.hass.data[DOMAIN][entry_id][DATA_PENDING]
             if user_input.get("use_device"):
                 _LOGGER.debug("User accepted device %s", self._device_data)
+                self.hass.data[DOMAIN][entry_id][DATA_DEVICES][device_id] = device
+                pending.pop(device_id, None)
                 return self.async_create_entry(
                     title=self._device_title(),
                     data=self._device_data,
                 )
             _LOGGER.debug("User declined device %s", self._device_data)
+            pending.pop(device_id, None)
             return self.async_abort(reason="user_declined")
 
         device = self._device_data["device"]
@@ -75,6 +93,15 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders=placeholders,
             data_schema=vol.Schema({vol.Required("use_device", default=True): bool}),
         )
+
+    async def async_step_ignore(self, user_input=None):
+        """Ignore a discovered device."""
+        device = self._device_data["device"]
+        entry_id = self._device_data["entry_id"]
+        device_id = f"{device.get('model')}_{device.get('id', 'unknown')}"
+        self.hass.data[DOMAIN][entry_id][DATA_PENDING].pop(device_id, None)
+        _LOGGER.debug("Device %s ignored by user", self._device_data)
+        return self.async_abort(reason="user_declined")
 
 
 @callback
