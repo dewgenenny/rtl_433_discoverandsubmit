@@ -25,6 +25,7 @@ setup(
     keywords="rtl_433 mqtt homeassistant",
     package_data={
         'rtl_433_discoverandsubmit': ['config/*.json'],
+        'custom_components.rtl_433_discoverandsubmit': ['config/*.json'],
     },
     # Entry points
     entry_points={

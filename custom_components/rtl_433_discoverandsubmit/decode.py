@@ -7,9 +7,9 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-# Load device mappings from the package data
+# Load device mappings from the package data bundled with the integration
 try:
-    mappings_bytes = pkgutil.get_data('rtl_433_discoverandsubmit', 'config/device_mappings.json')
+    mappings_bytes = pkgutil.get_data(__package__, 'config/device_mappings.json')
     DEVICE_MAPPINGS = json.loads(mappings_bytes.decode()) if mappings_bytes else {}
 except Exception as err:
     _LOGGER.error("Failed to load device mappings: %s", err)

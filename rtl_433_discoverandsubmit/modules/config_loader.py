@@ -4,12 +4,18 @@ import pkg_resources
 import logging
 
 config_path = pkg_resources.resource_filename('rtl_433_discoverandsubmit', 'config/cli_config.json')
-device_mappings_path = pkg_resources.resource_filename('rtl_433_discoverandsubmit', 'config/device_mappings.json')
+device_mappings_path = pkg_resources.resource_filename(
+    'custom_components.rtl_433_discoverandsubmit',
+    'config/device_mappings.json'
+)
 
 
 # Define Configuration Paths
 CLI_CONFIG_PATH = os.path.join(os.path.dirname(__file__), '../config/cli_config.json')
-DEVICE_MAPPINGS_PATH = os.path.join(os.path.dirname(__file__), '../config/device_mappings.json')
+DEVICE_MAPPINGS_PATH = os.path.join(
+    os.path.dirname(__file__),
+    '../custom_components/rtl_433_discoverandsubmit/config/device_mappings.json'
+)
 
 
 
