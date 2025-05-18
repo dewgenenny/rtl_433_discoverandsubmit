@@ -1,0 +1,9 @@
+{
+    "domain": "rtl_433_discoverandsubmit",
+    "name": "RTL_433 Discover and Submit",
+    "version": "0.1.0",
+    "documentation": "https://example.com",
+    "dependencies": [],
+    "codeowners": [],
+    "requirements": []
+}
