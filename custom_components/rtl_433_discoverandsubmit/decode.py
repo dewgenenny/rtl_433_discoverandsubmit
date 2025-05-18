@@ -36,7 +36,8 @@ def parse_mqtt_message(topic: str, payload: str) -> Optional[Dict[str, Any]]:
             data.setdefault('id', parts[3])
         elif len(parts) >= 3:
             data.setdefault('model', parts[1])
-            data.setdefault('id', parts[2])
+            if parts[2] != 'events':
+                data.setdefault('id', parts[2])
 
     device = {
         'model': data.get('model'),
