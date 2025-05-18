@@ -5,6 +5,8 @@
     "documentation": "https://example.com",
     "dependencies": [],
     "codeowners": [],
-    "requirements": [],
+    "requirements": [
+        "paho-mqtt"
+    ],
     "config_flow": true
 }
