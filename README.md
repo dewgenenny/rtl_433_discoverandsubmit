@@ -1,14 +1,14 @@
 # rtl_433_discoverandsubmit
 
-A command-line utility to connect to an MQTT server, listen to `rtl_433` events, and allow users to generate auto-discovery configurations for Home Assistant for the devices they choose.
+A Home Assistant integration that connects to an MQTT server, listens to `rtl_433` events and allows users to add devices through the standard discovery flow.
 
 [Link to GitHub project](https://github.com/dewgenenny/rtl_433_discoverandsubmit)
 
 ## Features
 - Connects to an MQTT server.
 - Listens to `rtl_433` events in real-time.
-- Provides an interactive CLI to let users choose devices.
-- Generates Home Assistant auto-discovery configurations for chosen devices.
+- Uses Home Assistant's config flow to manage devices.
+- No entities are created without user confirmation.
 
 [![Upload Python Package](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml/badge.svg)](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml)
 
@@ -30,17 +30,9 @@ pip install rtl_433_discoverandsubmit
 ```
 
 
-##Usage
+## Usage
 
-After installation, you can run the tool using:
-
-```rtl_433_discoverandsubmit```
-
-##Command Line Arguments
-
-You can specify the MQTT server, username, and password (if applicable) as well as the topic via command-line arguments. More details can be found in the help documentation:
-
-```rtl_433_discoverandsubmit --help```
+Install the custom integration and add it via Home Assistant's integrations page. During setup you will be asked for MQTT connection details and the topic to listen to. Newly discovered devices will trigger a prompt asking whether they should be added.
 
 ##Contributing
 
