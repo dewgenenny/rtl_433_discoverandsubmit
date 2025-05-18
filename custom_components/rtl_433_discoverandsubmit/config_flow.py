@@ -54,6 +54,10 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle a newly discovered device."""
         _LOGGER.debug("Device discovered: %s", discovery_info)
         self._device_data = discovery_info
+        self.context["title_placeholders"] = {
+            "model": discovery_info["device"].get("model", "unknown"),
+            "id": discovery_info["device"].get("id", "unknown"),
+        }
         return await self.async_step_confirm()
 
     def _device_title(self) -> str:
@@ -68,17 +72,13 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             entry_id = self._device_data["entry_id"]
             device_id = f"{device.get('model')}_{device.get('id', 'unknown')}"
             pending = self.hass.data[DOMAIN][entry_id][DATA_PENDING]
-            if user_input.get("use_device"):
-                _LOGGER.debug("User accepted device %s", self._device_data)
-                self.hass.data[DOMAIN][entry_id][DATA_DEVICES][device_id] = device
-                pending.pop(device_id, None)
-                return self.async_create_entry(
-                    title=self._device_title(),
-                    data=self._device_data,
-                )
-            _LOGGER.debug("User declined device %s", self._device_data)
+            _LOGGER.debug("User accepted device %s", self._device_data)
+            self.hass.data[DOMAIN][entry_id][DATA_DEVICES][device_id] = device
             pending.pop(device_id, None)
-            return self.async_abort(reason="user_declined")
+            return self.async_create_entry(
+                title=self._device_title(),
+                data=self._device_data,
+            )
 
         device = self._device_data["device"]
         _LOGGER.debug("Asking user to confirm device %s", self._device_data)
@@ -91,7 +91,6 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="confirm",
             description_placeholders=placeholders,
-            data_schema=vol.Schema({vol.Required("use_device", default=True): bool}),
         )
 
     async def async_step_ignore(self, user_input=None):

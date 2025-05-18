@@ -25,6 +25,12 @@ class DiscoveryManager:
         _LOGGER.debug("Triggering config flow for %s", device_id)
         await self.hass.config_entries.flow.async_init(
             DOMAIN,
-            context={"source": "device"},
+            context={
+                "source": "device",
+                "title_placeholders": {
+                    "model": payload.get("model", "unknown"),
+                    "id": payload.get("id", "unknown"),
+                },
+            },
             data={"entry_id": self.entry_id, "device": payload},
         )
