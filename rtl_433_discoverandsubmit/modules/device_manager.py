@@ -27,15 +27,15 @@ def save_devices_to_file(devices):
 def load_devices_from_file():
     """Load the list of devices from a JSON file. Return an empty list if the file doesn't exist or is corrupted."""
     logging.info("Load devices from file called")
-    print("At start of load devices from file")
+    logging.debug("At start of load devices from file")
     device_file = initialize_device_storage()
     logging.debug("device file has been intialised = " + str(device_file))
     try:
         with open(device_file, 'r') as file:
-            print("inside load file, before load")
+            logging.debug("Inside load file, before load")
             logging.debug("Before json load")
             devices = json.load(file)
-            print("inside load file, after load")
+            logging.debug("Inside load file, after load")
             logging.debug(f"Loaded {len(devices)} devices from the file.")
 
             # 0.1.7 adds message count, we need to deal with people that have saved devices from previous versions
