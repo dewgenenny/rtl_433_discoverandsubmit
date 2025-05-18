@@ -7,10 +7,13 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
+_LOGGER.debug("Loading device mappings for rtl_433 integration")
+
 # Load device mappings from the package data bundled with the integration
 try:
     mappings_bytes = pkgutil.get_data(__package__, 'config/device_mappings.json')
     DEVICE_MAPPINGS = json.loads(mappings_bytes.decode()) if mappings_bytes else {}
+    _LOGGER.debug("Loaded %d device mappings", len(DEVICE_MAPPINGS))
 except Exception as err:
     _LOGGER.error("Failed to load device mappings: %s", err)
     DEVICE_MAPPINGS = {}
@@ -18,6 +21,7 @@ except Exception as err:
 
 def parse_mqtt_message(topic: str, payload: str) -> Optional[Dict[str, Any]]:
     """Parse an MQTT message published by rtl_433."""
+    _LOGGER.debug("Parsing MQTT message on topic %s: %s", topic, payload)
     try:
         data = json.loads(payload)
     except json.JSONDecodeError:
@@ -41,4 +45,5 @@ def parse_mqtt_message(topic: str, payload: str) -> Optional[Dict[str, Any]]:
         'raw': data,
         'sensors': {k: data[k] for k in DEVICE_MAPPINGS if k in data},
     }
+    _LOGGER.debug("Decoded device data: %s", device)
     return device
