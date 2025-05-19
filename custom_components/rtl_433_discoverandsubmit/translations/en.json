@@ -7,5 +7,8 @@
                 "description": "Discovered device \"{model}\" with id {id}. Sensors: {sensors}. Add to Home Assistant?"
             }
         }
+    },
+    "abort": {
+        "user_declined": "Device was ignored"
     }
 }

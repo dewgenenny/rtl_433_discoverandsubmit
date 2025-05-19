@@ -26,7 +26,7 @@ class DiscoveryManager:
         await self.hass.config_entries.flow.async_init(
             DOMAIN,
             context={
-                "source": "device",
+                "source": "mqtt",
                 "title_placeholders": {
                     "model": payload.get("model", "unknown"),
                     "id": payload.get("id", "unknown"),
