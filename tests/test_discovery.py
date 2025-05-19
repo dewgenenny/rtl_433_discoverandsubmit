@@ -29,6 +29,7 @@ class DiscoveryManagerTest(unittest.TestCase):
         self.assertEqual(len(hass.config_entries.flow.inits), 1)
         domain, context, data = hass.config_entries.flow.inits[0]
         self.assertEqual(domain, DOMAIN)
+        self.assertEqual(context.get("source"), "mqtt")
         self.assertEqual(data["device"], payload)
 
     def test_duplicate_device_no_flow(self):
