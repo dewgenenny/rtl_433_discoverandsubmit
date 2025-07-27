@@ -1,4 +1,7 @@
 import unittest
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from custom_components.rtl_433_discoverandsubmit.decode import parse_mqtt_message, DEVICE_MAPPINGS
 
 class DecodeMessageTest(unittest.TestCase):

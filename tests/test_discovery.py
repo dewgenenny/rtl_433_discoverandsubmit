@@ -1,5 +1,8 @@
 import asyncio
 import unittest
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from custom_components.rtl_433_discoverandsubmit.discovery import DiscoveryManager
 from custom_components.rtl_433_discoverandsubmit.const import DOMAIN, DATA_DEVICES, DATA_PENDING
