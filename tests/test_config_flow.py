@@ -1,7 +1,9 @@
 import asyncio
 import types
 import sys
+import os
 import unittest
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Stub out voluptuous module
 vol = types.ModuleType('voluptuous')

@@ -4,10 +4,16 @@ import pkg_resources
 import logging
 
 config_path = pkg_resources.resource_filename('rtl_433_discoverandsubmit', 'config/cli_config.json')
-device_mappings_path = pkg_resources.resource_filename(
-    'custom_components.rtl_433_discoverandsubmit',
-    'config/device_mappings.json'
-)
+try:
+    device_mappings_path = pkg_resources.resource_filename(
+        'custom_components.rtl_433_discoverandsubmit',
+        'config/device_mappings.json'
+    )
+except ModuleNotFoundError:
+    device_mappings_path = os.path.join(
+        os.path.dirname(__file__),
+        '../custom_components/rtl_433_discoverandsubmit/config/device_mappings.json'
+    )
 
 
 # Define Configuration Paths
