@@ -8,7 +8,7 @@ try:
 except Exception:  # pragma: no cover - optional dependency may be missing
     mqtt = None
 
-from .const import DOMAIN, DATA_DEVICES, DATA_PENDING
+from .const import DOMAIN, DATA_DEVICES, DATA_PENDING, OPTION_DEVICES
 from .discovery import DiscoveryManager
 from .decode import parse_mqtt_message
 
@@ -89,7 +89,7 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, entry):
     data = hass.data[DOMAIN][entry.entry_id]
-    data[DATA_DEVICES] = {}
+    data[DATA_DEVICES] = entry.options.get(OPTION_DEVICES, {})
     data[DATA_PENDING] = {}
 
     discovery = DiscoveryManager(hass, entry.entry_id)

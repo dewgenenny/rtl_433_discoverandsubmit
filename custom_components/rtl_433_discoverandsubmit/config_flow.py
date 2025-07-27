@@ -8,7 +8,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 
 from . import DOMAIN
-from .const import DATA_DEVICES, DATA_PENDING
+from .const import DATA_DEVICES, DATA_PENDING, OPTION_DEVICES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -81,6 +81,13 @@ class Rtl433ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             pending = self.hass.data[DOMAIN][entry_id][DATA_PENDING]
             _LOGGER.debug("User accepted device %s", self._device_data)
             self.hass.data[DOMAIN][entry_id][DATA_DEVICES][device_id] = device
+            entry = self.hass.config_entries.async_get_entry(entry_id)
+            stored = dict(entry.options.get(OPTION_DEVICES, {}))
+            stored[device_id] = device
+            self.hass.config_entries.async_update_entry(
+                entry,
+                options={**entry.options, OPTION_DEVICES: stored},
+            )
             pending.pop(device_id, None)
             return self.async_create_entry(
                 title=self._device_title(),
