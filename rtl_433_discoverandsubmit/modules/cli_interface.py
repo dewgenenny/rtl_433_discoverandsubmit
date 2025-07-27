@@ -107,6 +107,7 @@ def main_loop(stdscr):
     scroll_offset = 0
     selected_index = 0
     in_detailed_view = False
+    detailed_device = None
     mqtt_client = connect_mqtt()
 
     while True:
@@ -116,7 +117,7 @@ def main_loop(stdscr):
         if not in_detailed_view:
             display_device_list(stdscr, detected_devices, selected_index, scroll_offset)
         else:
-            display_device_details(stdscr, detected_devices[selected_index])
+            display_device_details(stdscr, detailed_device)
 
         key = stdscr.getch()
         # Check if 'k' is pressed
@@ -154,13 +155,13 @@ def main_loop(stdscr):
             save_devices_to_file(detected_devices)
             break
         elif key == ord('\n') and not in_detailed_view:
+            detailed_device = detected_devices[selected_index]
             in_detailed_view = True
         elif key == ord('b') and in_detailed_view:
             in_detailed_view = False
+            detailed_device = None
         elif key == ord('a') and in_detailed_view:
-            #add_device_to_ha(detected_devices[selected_index])
-
-            publish_ha_config(mqtt_client,detected_devices[selected_index])
+            publish_ha_config(mqtt_client, detailed_device)
 
             stdscr.move(5, 0)
             stdscr.addstr("Device added to Home Assistant!")  # Feedback to user
