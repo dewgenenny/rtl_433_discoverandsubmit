@@ -9,6 +9,9 @@ A Home Assistant integration that connects to an MQTT server, listens to `rtl_43
 - Listens to `rtl_433` events in real-time.
 - Uses Home Assistant's config flow to manage devices.
 - No entities are created without user confirmation.
+- Includes a command line interface for manual discovery.
+- Allows sorting of devices by last seen time, model or message count.
+- Press **k** in the CLI to reset message counters.
 
 [![Upload Python Package](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml/badge.svg)](https://github.com/dewgenenny/rtl_433_discoverandsubmit/actions/workflows/python-publish.yml)
 
@@ -33,6 +36,14 @@ pip install rtl_433_discoverandsubmit
 ## Usage
 
 Install the custom integration and add it via Home Assistant's integrations page. During setup you will be asked for MQTT connection details and the topic to listen to. Newly discovered devices will trigger a prompt asking whether they should be added.
+
+The package also installs a small CLI tool called `rtl_433_discoverandsubmit` which can be used without Home Assistant. Run it with your MQTT connection details:
+
+```bash
+rtl_433_discoverandsubmit --mqtt_server 192.168.1.10 --mqtt_port 1883 --topic rtl_433/+/events
+```
+
+Use the **s** key to cycle sorting of detected devices and **k** to reset the message counters if you want to start again. Accepted devices are persisted in `~/.rtl_433_discoverandsubmit/devices.json`.
 
 ##Contributing
 
