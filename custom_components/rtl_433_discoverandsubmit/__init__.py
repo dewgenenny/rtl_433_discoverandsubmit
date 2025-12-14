@@ -17,12 +17,16 @@ _LOGGER = logging.getLogger(__name__)
 class MQTTListener:
     """Listen to MQTT messages from rtl_433."""
 
-    def __init__(self, config, message_callback):
+    def __init__(self, config):
         self.config = config
-        self._callback = message_callback
+        self._callbacks = []
         self._running = False
         self._client = None
         self._loop = None
+
+    def register_callback(self, callback):
+        """Register a callback for received messages."""
+        self._callbacks.append(callback)
 
     async def start(self):
         """Connect to the MQTT broker and begin listening."""
@@ -46,9 +50,10 @@ class MQTTListener:
             device = parse_mqtt_message(msg.topic, payload)
             if device:
                 _LOGGER.debug("Parsed device from MQTT message: %s", device)
-                asyncio.run_coroutine_threadsafe(
-                    self._callback(device), self._loop
-                )
+                for callback in self._callbacks:
+                    asyncio.run_coroutine_threadsafe(
+                        callback(device), self._loop
+                    )
 
         self._client = mqtt.Client()
         username = self.config.get("mqtt_username")
@@ -71,17 +76,6 @@ class MQTTListener:
             self._client.disconnect()
         _LOGGER.debug("MQTT listener stopped")
 
-    async def simulate_message(self, topic, payload):
-        """Helper for tests to feed a message."""
-        if self._running:
-            _LOGGER.debug("Simulating MQTT message on %s: %s", topic, payload)
-            device = parse_mqtt_message(topic, payload)
-            if device:
-                _LOGGER.debug("Parsed device from MQTT message: %s", device)
-                await self._callback(device)
-            else:
-                _LOGGER.debug("Message on %s did not produce a device", topic)
-
 async def async_setup(hass, config):
     hass.data.setdefault(DOMAIN, defaultdict(dict))
     _LOGGER.debug("Setting up integration domain storage")
@@ -94,15 +88,20 @@ async def async_setup_entry(hass, entry):
 
     discovery = DiscoveryManager(hass, entry.entry_id)
 
-    async def handle(payload):
-        _LOGGER.debug("Handling incoming payload: %s", payload)
+    async def handle_discovery(payload):
+        _LOGGER.debug("Handling incoming payload for discovery: %s", payload)
         await discovery.handle_message(payload)
 
-    listener = MQTTListener(entry.data, handle)
+    listener = MQTTListener(entry.data)
+    listener.register_callback(handle_discovery)
+    
     data["listener"] = listener
     await listener.start()
     _LOGGER.debug("Listener started for entry %s", entry.entry_id)
     entry.async_on_unload(listener.stop)
+
+    await hass.config_entries.async_forward_entry_setups(entry, ["sensor", "binary_sensor"])
+
     return True
 
 async def async_unload_entry(hass, entry):
@@ -110,4 +109,6 @@ async def async_unload_entry(hass, entry):
     if data and "listener" in data:
         await data["listener"].stop()
         _LOGGER.debug("Listener stopped for entry %s", entry.entry_id)
-    return True
+    
+    return await hass.config_entries.async_unload_platforms(entry, ["sensor", "binary_sensor"])
+

@@ -109,13 +109,22 @@ def main_loop(stdscr):
     in_detailed_view = False
     detailed_device = None
     mqtt_client = connect_mqtt()
+    
+    # Republish config for known devices on startup
+    for device in detected_devices:
+        if device.get('added_to_ha'):
+            logging.info(f"Republishing config for {device.get('id')}")
+            publish_ha_config(mqtt_client, device)
 
     while True:
+
         stdscr.clear()
         height, width = stdscr.getmaxyx()
 
+
         if not in_detailed_view:
             display_device_list(stdscr, detected_devices, selected_index, scroll_offset)
+
         else:
             display_device_details(stdscr, detailed_device)
 
@@ -162,8 +171,11 @@ def main_loop(stdscr):
             detailed_device = None
         elif key == ord('a') and in_detailed_view:
             publish_ha_config(mqtt_client, detailed_device)
+            detailed_device['added_to_ha'] = True
+            save_devices_to_file(detected_devices)
 
             stdscr.move(5, 0)
+
             stdscr.addstr("Device added to Home Assistant!")  # Feedback to user
         elif key == ord('q'):
             save_devices_to_file(detected_devices)

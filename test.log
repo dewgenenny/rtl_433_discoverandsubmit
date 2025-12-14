@@ -1,0 +1,10 @@
+INFO:root:Right at start of device manager
+DEBUG:custom_components.rtl_433_discoverandsubmit.decode:Loading device mappings for rtl_433 integration
+DEBUG:custom_components.rtl_433_discoverandsubmit.decode:Loaded 45 device mappings
+INFO:root:devicemappings path: c:\Users\tom\rtl_433\rtl_433_discoverandsubmit\custom_components\rtl_433_discoverandsubmit\config\device_mappings.json
+INFO:root:Model: TestModel
+INFO:root:Instance: testmodel/123
+DEBUG:root:Attribute = temperature_C
+DEBUG:root:Path: homeassistant/sensor/123_temperature_C_T/config
+DEBUG:root:Type is None
+DEBUG:root:Config: {'device_class': 'temperature', 'name': 'temperature_C', 'unit_of_measurement': '°C', 'value_template': '{{ value|float }}', 'state_class': 'measurement', 'state_topic': 'rtl_433/Test/Events/devices/TestModel/123/temperature_C', 'unique_id': 'rtl_433_123_temperature_C_T', 'device': {'identifiers': 'testmodel/123', 'name': '123_T', 'model': 'TestModel', 'manufacturer': 'rtl_433'}}
